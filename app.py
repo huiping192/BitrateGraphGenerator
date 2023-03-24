@@ -46,7 +46,7 @@ def extract_bitrates(video_url):
     else:
         video_stream = next(stream for stream in probe['streams'] if stream['codec_type'] == 'video')
         audio_stream = next(stream for stream in probe['streams'] if stream['codec_type'] == 'audio')
-        video_bitrates = [int(video_stream['bit_rate']) / 1000] * int(float(video_stream['duration']))
+        video_bitrates = [int(video_stream.get('bit_rate', 0)) / 1000] * int(float(video_stream['duration']))
         audio_bitrates = [int(audio_stream['bit_rate']) / 1000] * int(float(audio_stream['duration']))
 
     return video_bitrates, audio_bitrates
