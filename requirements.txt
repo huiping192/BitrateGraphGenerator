@@ -1,2 +1,3 @@
 Flask
-plotbitrate
+ffmpeg-python
+matplotlib
