@@ -18,7 +18,7 @@ def home():
         video_info = get_video_info(video_url)
         
         frame_rate_graph_filename = f"static/frame_rate_graph_{uuid.uuid4().hex}.png"
-        generate_frame_rate_graph(video_url, frame_rate_graph_filename)
+        generate_frame_rate_graph(video_url, video_info['duration'], frame_rate_graph_filename)
 
         video_bitrate_graph_filename, audio_bitrate_graph_filename = generate_bitrate_graph(video_url)
         
@@ -62,14 +62,12 @@ def extract_frame_rates(video_url):
             frame_rate = float(numerator) / denominator
             frame_rates.append(frame_rate)
 
-            # Get the duration of the video
-            duration = float(stream['duration'])
 
-    return frame_rates, duration
+    return frame_rates
 
-def generate_frame_rate_graph(video_url, graph_filename):
+def generate_frame_rate_graph(video_url,duration, graph_filename):
     # Extract the frame rates and duration from the video
-    frame_rates, duration = extract_frame_rates(video_url)
+    frame_rates = extract_frame_rates(video_url)
 
     # Calculate the time interval between frames
     time_interval = 1 / sum(frame_rates)
