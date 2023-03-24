@@ -15,13 +15,13 @@ def home():
     if request.method == 'POST':
         video_url = request.form['video_url']
         
-        video_info = get_video_info(video_url)
+        video_info, audio_info = get_video_info(video_url)
         
         frame_rate_graph_filename = f"static/frame_rate_graph_{uuid.uuid4().hex}.png"
 
         video_bitrate_graph_filename, audio_bitrate_graph_filename = generate_bitrate_graph(video_url)
         
-        return render_template('index.html', video_info=video_info, video_bitrate_graph_filename=video_bitrate_graph_filename, audio_bitrate_graph_filename=audio_bitrate_graph_filename)
+        return render_template('index.html', video_info=video_info, audio_info=audio_info, video_bitrate_graph_filename=video_bitrate_graph_filename, audio_bitrate_graph_filename=audio_bitrate_graph_filename)
     return render_template('index.html', video_info=None, video_bitrate_graph_filename=None, audio_bitrate_graph_filename=None)
 
 def get_video_info(video_url):
@@ -37,6 +37,7 @@ def get_video_info(video_url):
 
     # Extract the video information from the FFprobe output
     video_info = {}
+    audio_info = {}
     for stream in data['streams']:
         if stream['codec_type'] == 'video':
             video_info['codec'] = stream['codec_name']
@@ -44,8 +45,12 @@ def get_video_info(video_url):
             video_info['frame_rate'] = f"{Fraction(stream['r_frame_rate']).limit_denominator()}"
             video_info['duration'] = f"{datetime.timedelta(seconds=float(data['format']['duration']))}"
             video_info['duration_seconds'] = float(data['format']['duration'])
-            break
-    return video_info
+        elif stream['codec_type'] == 'audio':
+            audio_info['codec'] = stream['codec_name']
+            audio_info['bit_rate'] = f"{int(stream['bit_rate']) // 1000} Kbps"
+            audio_info['sample_rate'] = f"{int(stream['sample_rate']) // 1000} KHz"
+            audio_info['channels'] = stream['channels']
+    return video_info,audio_info
     
 def generate_bitrate_graph(video_url):
     # Create the bitrate graphs

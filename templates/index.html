@@ -17,24 +17,36 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 
-        {% if video_info %}
-        <div class="mt-5">
-            <h2>Video Information</h2>
-            <ul>
-            <li><strong>Codec:</strong> {{ video_info['codec'] }}</li>
-            <li><strong>Resolution:</strong> {{ video_info['resolution'] }}</li>
-            <li><strong>Frame Rate:</strong> {{ video_info['frame_rate'] }}</li>
-            <li><strong>Duration:</strong> {{ video_info['duration'] }}</li>
-            </ul>
+        <div class="row">
+            <div class="col-md-6">
+              {% if video_info %}
+                <h2>Video Information</h2>
+                <ul>
+                  <li><strong>Codec:</strong> {{ video_info['codec'] }}</li>
+                  <li><strong>Resolution:</strong> {{ video_info['resolution'] }}</li>
+                  <li><strong>Frame Rate:</strong> {{ video_info['frame_rate'] }}</li>
+                  <li><strong>Duration:</strong> {{ video_info['duration'] }}</li>
+                </ul>
+              {% endif %}
             </div>
-        {% endif %}
+            <div class="col-md-6">
+              {% if audio_info %}
+                <h2>Audio Information</h2>
+                <ul>
+                  <li><strong>Codec:</strong> {{ audio_info['codec'] }}</li>
+                  <li><strong>Sample Rate:</strong> {{ audio_info['sample_rate'] }}</li>
+                  <li><strong>Channels:</strong> {{ audio_info['channels'] }}</li>
+                  <li><strong>Duration:</strong> {{ audio_info['duration'] }}</li>
+                </ul>
+              {% endif %}
+            </div>
+          </div>
         {% if video_bitrate_graph_filename %}
         <div class="mt-5">
             <h2>Video Bitrate Graph</h2>
             <img src="{{ video_bitrate_graph_filename }}" alt="Video Bitrate Graph">
         </div>
         {% endif %}
-        
         {% if audio_bitrate_graph_filename %}
         <div class="mt-5">
             <h2>Audio Bitrate Graph</h2>
