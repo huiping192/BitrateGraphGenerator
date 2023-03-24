@@ -18,6 +18,13 @@ To use Bitrate Graph Generator, follow these steps:
 3. Enter the URL of a video file in the input box and click the "Submit" button
 4. The bitrate graph will be generated and displayed below the input box
 
+# Docker
+1. Clone the repository: git clone https://github.com/your-username/BitrateGraphGenerator.git
+2. Navigate to the project directory: cd BitrateGraphGenerator
+3. Build the Docker image: docker build -t bitrate-graph-generator .
+4. Run the Docker container: docker run -p 5001:5001 bitrate-graph-generator
+5. Open your web browser and go to http://localhost:5001
+
 # Contributing
 
 Contributions to Bitrate Graph Generator are welcome! Here are the steps to contribute:
