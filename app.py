@@ -54,11 +54,15 @@ def extract_frame_rates(video_url):
 
     # Extract the frame rates and duration from the FFprobe output
     frame_rates = []
-    duration = 0
+    duration = None
     for stream in json.loads(result.stdout)['streams']:
         if stream['codec_type'] == 'video':
-            frame_rates.append(float(stream['r_frame_rate']))
+            frame_rate_str = stream['r_frame_rate']
+            frame_rate = float(Fraction(frame_rate_str))
+            frame_rates.append(frame_rate)
             duration = float(stream['duration'])
+            break
+
     return frame_rates, duration
 
 def generate_frame_rate_graph(video_url, graph_filename):
