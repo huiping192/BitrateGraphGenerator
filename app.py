@@ -14,9 +14,15 @@ app = Flask(__name__)
 def home():
     if request.method == 'POST':
         video_url = request.form['video_url']
+        
         video_info = get_video_info(video_url)
+        
+        frame_rate_graph_filename = f"static/frame_rate_graph_{uuid.uuid4().hex}.png"
+        generate_frame_rate_graph(video_url, frame_rate_graph_filename)
+
         video_bitrate_graph_filename, audio_bitrate_graph_filename = generate_bitrate_graph(video_url)
-        return render_template('index.html', video_info=video_info, video_bitrate_graph_filename=video_bitrate_graph_filename, audio_bitrate_graph_filename=audio_bitrate_graph_filename)
+        
+        return render_template('index.html', video_info=video_info, video_bitrate_graph_filename=frame_rate_graph_filename, audio_bitrate_graph_filename=audio_bitrate_graph_filename)
     return render_template('index.html', video_info=None, video_bitrate_graph_filename=None, audio_bitrate_graph_filename=None)
 
 def get_video_info(video_url):
@@ -41,6 +47,31 @@ def get_video_info(video_url):
             break
     return video_info
 
+def extract_frame_rates(video_url):
+    # Run FFprobe to get the video information
+    command = ['ffprobe', '-v', 'quiet', '-print_format', 'json', '-show_format', '-show_streams', video_url]
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+
+    # Extract the frame rates from the FFprobe output
+    frame_rates = []
+    for stream in json.loads(result.stdout)['streams']:
+        if stream['codec_type'] == 'video':
+            frame_rates.append(float(stream['r_frame_rate']))
+
+    return frame_rates
+
+def generate_frame_rate_graph(video_url, graph_filename):
+    # Extract the frame rates
+    frame_rates = extract_frame_rates(video_url)
+
+    # Plot the frame rates
+    plt.plot(frame_rates)
+    plt.ylabel('Frame Rate (fps)')
+    plt.xlabel('Frame Index')
+    plt.title('Frame Rate Graph')
+    plt.savefig(graph_filename)
+    plt.clf()
+    
 def generate_bitrate_graph(video_url):
     # Create the bitrate graphs
     video_graph_filename = f"static/video_bitrate_graph_{uuid.uuid4().hex}.png"
