@@ -49,16 +49,21 @@ def get_video_info(video_url):
 
 def extract_frame_rates(video_url):
     # Run FFprobe to get the video information
-    command = ['ffprobe', '-v', 'quiet', '-print_format', 'json', '-show_format', '-show_streams', '-show_entries', 'format=duration', video_url]
+    command = ['ffprobe', '-v', 'quiet', '-print_format', 'json', '-show_format', '-show_streams', video_url]
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
 
-    # Extract the frame rates from the FFprobe output
-    data = json.loads(result.stdout)
-    duration = float(data['format']['duration'])
+    # Extract the frame rates and duration from the FFprobe output
     frame_rates = []
-    for stream in data['streams']:
+    duration = None
+    for stream in json.loads(result.stdout)['streams']:
         if stream['codec_type'] == 'video':
-            frame_rates.append(float(stream['r_frame_rate']))
+            # Parse the numerator and denominator of the framerate
+            numerator, denominator = map(int, stream['r_frame_rate'].split('/'))
+            frame_rate = float(numerator) / denominator
+            frame_rates.append(frame_rate)
+
+            # Get the duration of the video
+            duration = float(stream['duration'])
 
     return frame_rates, duration
 
