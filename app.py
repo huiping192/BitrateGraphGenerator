@@ -56,7 +56,12 @@ def extract_frame_rates(video_url):
     frame_rates = []
     for stream in json.loads(result.stdout)['streams']:
         if stream['codec_type'] == 'video':
-            frame_rates.append(float(stream['r_frame_rate']))
+            try:
+                rate = float(stream['r_frame_rate'])
+            except ValueError:
+                # Convert the frame rate to a fraction and extract the numerator and denominator
+                rate = float(Fraction(stream['r_frame_rate']))
+            frame_rates.append(rate)
 
     return frame_rates
 
