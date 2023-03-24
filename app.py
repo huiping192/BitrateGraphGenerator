@@ -47,7 +47,6 @@ def get_video_info(video_url):
             video_info['duration_seconds'] = float(data['format']['duration'])
         elif stream['codec_type'] == 'audio':
             audio_info['codec'] = stream['codec_name']
-            audio_info['bit_rate'] = f"{int(stream['bit_rate']) // 1000} Kbps"
             audio_info['sample_rate'] = f"{int(stream['sample_rate']) // 1000} KHz"
             audio_info['channels'] = stream['channels']
     return video_info,audio_info
