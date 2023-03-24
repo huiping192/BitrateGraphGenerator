@@ -1,25 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="/static/css/tabler.min.css">
-    <title>Bitrate Graph</title>
+    <title>Bitrate Graph Generator</title>
 </head>
 <body>
-<div class="container">
-    <h1>Bitrate Graph Generator</h1>
-    <form method="POST">
-        <div class="form-group">
-            <label for="video_url">Video URL:</label>
-            <input type="text" name="video_url" id="video_url" class="form-control" required>
+    <div class="container">
+        <h1 class="mt-5">Bitrate Graph Generator</h1>
+        <form method="POST" class="mt-4">
+            <div class="form-group">
+                <label for="video_url">Video URL</label>
+                <input type="text" class="form-control" name="video_url" id="video_url" placeholder="Enter video URL">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        {% if graph_filename %}
+        <div class="mt-5">
+            <h2>Bitrate Graph</h2>
+            <img src="{{ graph_filename }}" alt="Bitrate Graph">
         </div>
-        <button type="submit" class="btn btn-primary">Generate Graph</button>
-    </form>
-    {% if graph_image %}
-        <h2>Video and Audio Bitrate Graph</h2>
-        <img src="{{ graph_image }}" alt="Bitrate Graph" class="img-fluid">
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
+    <script src="/static/js/tabler.min.js"></script>
 </body>
 </html>
