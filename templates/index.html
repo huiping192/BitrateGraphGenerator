@@ -17,10 +17,17 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 
-        {% if graph_filename %}
+        {% if video_graph_filename %}
         <div class="mt-5">
-            <h2>Bitrate Graph</h2>
-            <img src="{{ graph_filename }}" alt="Bitrate Graph">
+            <h2>Video Bitrate Graph</h2>
+            <img src="{{ video_graph_filename }}" alt="Video Bitrate Graph">
+        </div>
+        {% endif %}
+        
+        {% if audio_graph_filename %}
+        <div class="mt-5">
+            <h2>Audio Bitrate Graph</h2>
+            <img src="{{ audio_graph_filename }}" alt="Audio Bitrate Graph">
         </div>
         {% endif %}
     </div>
