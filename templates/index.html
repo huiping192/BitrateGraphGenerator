@@ -17,6 +17,17 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 
+        {% if video_info %}
+        <div class="mt-5">
+            <h2>Video Information</h2>
+            <ul>
+            <li><strong>Codec:</strong> {{ video_info['codec'] }}</li>
+            <li><strong>Resolution:</strong> {{ video_info['resolution'] }}</li>
+            <li><strong>Frame Rate:</strong> {{ video_info['frame_rate'] }}</li>
+            <li><strong>Duration:</strong> {{ video_info['duration'] }}</li>
+            </ul>
+            </div>
+        {% endif %}
         {% if video_graph_filename %}
         <div class="mt-5">
             <h2>Video Bitrate Graph</h2>

@@ -12,9 +12,32 @@ app = Flask(__name__)
 def home():
     if request.method == 'POST':
         video_url = request.form['video_url']
-        video_graph_filename, audio_graph_filename = generate_bitrate_graph(video_url)
-        return render_template('index.html', video_graph_filename=video_graph_filename, audio_graph_filename=audio_graph_filename)
-    return render_template('index.html', video_graph_filename=None, audio_graph_filename=None)
+        video_info = get_video_info(video_url)
+        video_bitrate_graph_filename, audio_bitrate_graph_filename = generate_bitrate_graph(video_url)
+        return render_template('index.html', video_info=video_info, video_bitrate_graph_filename=video_bitrate_graph_filename, audio_bitrate_graph_filename=audio_bitrate_graph_filename)
+    return render_template('index.html', video_info=None, video_bitrate_graph_filename=None, audio_bitrate_graph_filename=None)
+
+def get_video_info(video_url):
+    # Create a temporary file to store the FFprobe output
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as fp:
+        # Run FFprobe to get the video information
+        subprocess.run(['ffprobe', '-v', 'quiet', '-print_format', 'json', '-show_format', '-show_streams', video_url], stdout=fp)
+        fp.flush()
+
+        # Load the JSON data from the file
+        with open(fp.name) as f:
+            data = json.load(f)
+
+    # Extract the video information from the FFprobe output
+    video_info = {}
+    for stream in data['streams']:
+        if stream['codec_type'] == 'video':
+            video_info['codec'] = stream['codec_name']
+            video_info['resolution'] = f"{stream['width']}x{stream['height']}"
+            video_info['frame_rate'] = f"{Fraction(stream['r_frame_rate']).limit_denominator()}"
+            video_info['duration'] = f"{datetime.timedelta(seconds=float(data['format']['duration']))}"
+            break
+    return video_info
 
 def generate_bitrate_graph(video_url):
     # Create the bitrate graphs
