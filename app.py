@@ -52,34 +52,35 @@ def extract_frame_rates(video_url):
     command = ['ffprobe', '-v', 'quiet', '-print_format', 'json', '-show_format', '-show_streams', video_url]
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
 
-    # Extract the frame rates from the FFprobe output
+    # Extract the frame rates and duration from the FFprobe output
     frame_rates = []
+    duration = 0
     for stream in json.loads(result.stdout)['streams']:
         if stream['codec_type'] == 'video':
-            try:
-                rate = float(stream['r_frame_rate'])
-            except ValueError:
-                # Convert the frame rate to a fraction and extract the numerator and denominator
-                rate = float(Fraction(stream['r_frame_rate']))
-            frame_rates.append(rate)
+            frame_rates.append(float(stream['r_frame_rate']))
+            duration = float(stream['duration'])
+    return frame_rates, duration
 
-    return frame_rates
+def generate_frame_rate_graph(video_url, graph_filename):
+    # Extract the frame rates and duration from the video
+    frame_rates, duration = extract_frame_rates(video_url)
 
-def generate_frame_rate_graph(video_url, frame_rate_graph_filename):
-    # Extract the frame rates from the video
-    frame_rates = extract_frame_rates(video_url)
+    # Calculate the time interval between frames
+    time_interval = 1 / sum(frame_rates)
 
-    # Run FFprobe to get the duration of the video
-    command = ['ffprobe', '-v', 'quiet', '-print_format', 'json', '-show_format', video_url]
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-    duration = float(json.loads(result.stdout)['format']['duration'])
+    # Generate a list of timestamps for each frame
+    timestamps = [datetime.timedelta(seconds=x * time_interval).total_seconds() for x in range(int(duration * sum(frame_rates)))]
 
     # Plot the frame rate graph
-    plt.plot(range(len(frame_rates)), frame_rates)
-    plt.xlabel('Frame')
-    plt.ylabel('Frame Rate (fps)')
-    plt.title(f'Frame Rate vs. Frame Index (Duration: {duration:.2f}s)')
-    plt.savefig(frame_rate_graph_filename)
+    fig, ax = plt.subplots()
+    ax.plot(timestamps, frame_rates)
+    ax.set_xlabel('Time (s)')
+    ax.set_ylabel('Frame Rate (fps)')
+    ax.set_title('Frame Rate Graph')
+    plt.savefig(graph_filename)
+    plt.close()
+
+    return graph_filename
     
 def generate_bitrate_graph(video_url):
     # Create the bitrate graphs
