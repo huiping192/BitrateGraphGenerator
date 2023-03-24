@@ -65,17 +65,21 @@ def extract_frame_rates(video_url):
 
     return frame_rates
 
-def generate_frame_rate_graph(video_url, graph_filename):
-    # Extract the frame rates
+def generate_frame_rate_graph(video_url, frame_rate_graph_filename):
+    # Extract the frame rates from the video
     frame_rates = extract_frame_rates(video_url)
 
-    # Plot the frame rates
-    plt.plot(frame_rates)
+    # Run FFprobe to get the duration of the video
+    command = ['ffprobe', '-v', 'quiet', '-print_format', 'json', '-show_format', video_url]
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+    duration = float(json.loads(result.stdout)['format']['duration'])
+
+    # Plot the frame rate graph
+    plt.plot(range(len(frame_rates)), frame_rates)
+    plt.xlabel('Frame')
     plt.ylabel('Frame Rate (fps)')
-    plt.xlabel('Frame Index')
-    plt.title('Frame Rate Graph')
-    plt.savefig(graph_filename)
-    plt.clf()
+    plt.title(f'Frame Rate vs. Frame Index (Duration: {duration:.2f}s)')
+    plt.savefig(frame_rate_graph_filename)
     
 def generate_bitrate_graph(video_url):
     # Create the bitrate graphs
