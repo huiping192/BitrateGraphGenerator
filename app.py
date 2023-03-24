@@ -73,7 +73,7 @@ def generate_frame_rate_graph(video_url,duration, graph_filename):
     time_interval = 1 / sum(frame_rates)
 
     # Generate a list of timestamps for each frame
-    timestamps = [datetime.timedelta(seconds=x * time_interval).total_seconds() for x in range(int(duration * sum(frame_rates)))]
+    timestamps = [datetime.timedelta(seconds=x * time_interval).total_seconds() for x in range(int(int(duration) * sum(frame_rates)))]
 
     # Plot the frame rate graph
     fig, ax = plt.subplots()
