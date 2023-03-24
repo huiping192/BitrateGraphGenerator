@@ -44,7 +44,7 @@ def get_video_info(video_url):
             video_info['resolution'] = f"{stream['width']}x{stream['height']}"
             video_info['frame_rate'] = f"{Fraction(stream['r_frame_rate']).limit_denominator()}"
             video_info['duration'] = f"{datetime.timedelta(seconds=float(data['format']['duration']))}"
-            video_info['duration_seconds'] = f"{data['format']['duration']}"
+            video_info['duration_seconds'] = float(data['format']['duration'])
             break
     return video_info
 
