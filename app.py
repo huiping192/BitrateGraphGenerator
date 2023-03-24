@@ -18,7 +18,7 @@ def home():
         video_info = get_video_info(video_url)
         
         frame_rate_graph_filename = f"static/frame_rate_graph_{uuid.uuid4().hex}.png"
-        generate_frame_rate_graph(video_url, video_info['duration'], frame_rate_graph_filename)
+        generate_frame_rate_graph(video_url, video_info['duration_seconds'], frame_rate_graph_filename)
 
         video_bitrate_graph_filename, audio_bitrate_graph_filename = generate_bitrate_graph(video_url)
         
@@ -44,6 +44,7 @@ def get_video_info(video_url):
             video_info['resolution'] = f"{stream['width']}x{stream['height']}"
             video_info['frame_rate'] = f"{Fraction(stream['r_frame_rate']).limit_denominator()}"
             video_info['duration'] = f"{datetime.timedelta(seconds=float(data['format']['duration']))}"
+            video_info['duration_seconds'] = f"{data['format']['duration']}"
             break
     return video_info
 
