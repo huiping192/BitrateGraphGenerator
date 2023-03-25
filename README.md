@@ -1,6 +1,6 @@
 # Bitrate Graph Generator
 
-Bitrate Graph Generator is a web application that generates a graph of the bitrate of a video file. It uses the plotbitrate library to create the graph.
+Bitrate Graph Generator is a web application that generates a graph of the bitrate of a video file. It uses the [plotbitrate library](https://github.com/zeroepoch/plotbitrate) to create the graph.
 
 # Installation
 
